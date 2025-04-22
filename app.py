@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS scores (
 )
 """)
 
-URL_TEST_Y = "https://s3.us-east-2.amazonaws.com/jjsantoso.com/datasets/automobile_test_y_real.csv"
+URL_TEST_Y = st.secrets["URL_TEST_Y"]
 y_true = pd.read_csv(URL_TEST_Y)["price"].to_numpy()
 
 # ---------- UI ----------
