@@ -1,70 +1,60 @@
-# streamlit_app.py
 import streamlit as st
-import pandas as pd
-import numpy as np
-import sqlite3
-from sklearn.metrics import mean_squared_error
+from config import init_database
+from challenges.car_price import car_price_challenge
+from challenges.wine_quality import wine_quality_challenge
 
-# ---------- Configuración ----------
+# Initialize database
+init_database()
 
-DB_PATH = "leaderboard.db"
-conn = sqlite3.connect(DB_PATH, check_same_thread=False)
-conn.execute("""
-CREATE TABLE IF NOT EXISTS scores (
-    username TEXT PRIMARY KEY,
-    rmse REAL,
-    uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+# Page configuration
+st.set_page_config(
+    page_title="ML Hackathon Platform",
+    page_icon="🏆",
+    layout="wide"
 )
-""")
 
-URL_TEST_Y = st.secrets["URL_TEST_Y"]
-y_true = pd.read_csv(URL_TEST_Y)["price"].to_numpy()
+# Sidebar navigation
+st.sidebar.title("🏆 ML Challenges")
+st.sidebar.markdown("Select a challenge:")
 
-# ---------- UI ----------
-st.title("🚗💰   Vakav Price Hackathon")
-qp = st.query_params
-username_qp = qp.get("user", "")
-
-if username_qp and "username" not in st.session_state:
-    st.session_state["username"] = username_qp
-
-user_input = st.text_input("👤 Elige tu usuario (único)",
-                        value=st.session_state.get("username", username_qp),
-                        max_chars=20)
-
-if user_input:
-    st.session_state["username"] = user_input
-    # Evita que se disparen bucles infinitos comprobando valor actual
-    if qp.get("user", "") != user_input:
-        qp["user"] = user_input         # esto provoca un rerun limpio
-
-uploaded = st.file_uploader("📤 Sube tu CSV de predicciones", type="csv")
-
-if uploaded:
-    if user_input:
-        preds = pd.read_csv(uploaded)["price"].to_numpy()
-        if len(preds) != len(y_true):
-            st.error(f"Número de filas incorrecto: {len(preds)} vs {len(y_true)}")
-        else:
-            rmse = np.sqrt(mean_squared_error(y_true, preds))
-            st.success(f"Tu RMSE: {rmse:,.2f}")
-
-            # Guarda solo si es la mejor marca personal
-            cur = conn.execute("SELECT rmse FROM scores WHERE username=?", (user_input,))
-            row = cur.fetchone()
-            if row is None or rmse < row[0]:
-                conn.execute(
-                    "INSERT OR REPLACE INTO scores(username, rmse) VALUES(?,?)",
-                    (user_input, rmse)
-                )
-                conn.commit()
-                st.balloons()
-    else:
-        st.error("Introduzca su usuario")
-
-# ---------- Ranking ----------
-st.subheader("🏆 Ranking (mejor RMSE por usuario)")
-df_lb = pd.read_sql_query(
-    "SELECT username, rmse FROM scores ORDER BY rmse ASC LIMIT 20", conn
+page = st.sidebar.selectbox(
+    "Choose Challenge:",
+    ["🏠 Home", "🚗 Car Price Prediction", "🍷 Wine Quality Classification"]
 )
-st.dataframe(df_lb, use_container_width=True)
+
+# Main content based on selection
+if page == "🏠 Home":
+    st.title("🏆 Machine Learning Hackathon Platform")
+    st.markdown("""
+    Welcome to the ML Hackathon Platform! Choose a challenge from the sidebar to get started.
+    
+    ## Available Challenges:
+    
+    ### 🚗 Car Price Prediction
+    - **Type**: Regression
+    - **Metric**: RMSE (Root Mean Square Error)
+    - **Goal**: Predict car prices as accurately as possible
+    
+    ### 🍷 Wine Quality Classification  
+    - **Type**: Multiclass Classification
+    - **Metric**: Accuracy
+    - **Goal**: Classify wine quality scores
+    
+    ## How to Participate:
+    1. Choose your username (it will be saved in the URL for convenience)
+    2. Download the training data and develop your model
+    3. Upload your predictions as a CSV file
+    4. See your score and compete on the leaderboard!
+    
+    Good luck! 🚀
+    """)
+
+elif page == "🚗 Car Price Prediction":
+    car_price_challenge()
+    
+elif page == "🍷 Wine Quality Classification":
+    wine_quality_challenge()
+
+# Footer
+st.sidebar.markdown("---")
+st.sidebar.markdown("Made with ❤️ using Streamlit")
