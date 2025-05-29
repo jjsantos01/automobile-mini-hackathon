@@ -8,7 +8,7 @@ import os
 
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils import handle_username_input, save_score, display_leaderboard
+from utils import handle_username_input, save_score, display_leaderboard, display_user_attempts
 
 st.set_page_config(page_title="Wine Quality Classification", page_icon="🍷")
 
@@ -23,8 +23,8 @@ st.markdown("""
 
 # Get test data
 try:
-    URL_WINE_TEST_Y = st.secrets["URL_WINE_TEST_Y"]
-    y_true = pd.read_csv(URL_WINE_TEST_Y)["quality"].to_numpy()
+    URL_TEST_Y = st.secrets["URL_WINE_TEST_Y"]
+    y_true = pd.read_csv(URL_TEST_Y)["quality"].to_numpy()
 except Exception as e:
     st.error(f"Error loading test data: {e}")
     st.info("Make sure to add URL_WINE_TEST_Y to your Streamlit secrets")
@@ -64,12 +64,14 @@ if uploaded:
             accuracy = accuracy_score(y_true, preds)
             st.success(f"Your Accuracy: {accuracy:.4f} ({accuracy*100:.2f}%)")
             
-            # Save if better
+            # Save score and attempt
             is_better = lambda new, old: new > old
-            saved = save_score(username, accuracy, "wine_scores", "accuracy", is_better)
+            is_new_best = save_score(username, accuracy, "wine_scores", "wine_attempts", "accuracy", is_better)
             
-            if saved:
+            if is_new_best:
                 st.success("New personal best saved! 🎉")
+            else:
+                st.info("Score saved! Keep trying to beat your best.")
             
         except Exception as e:
             st.error(f"Error processing file: {e}")
@@ -79,3 +81,6 @@ if uploaded:
 # Display leaderboard
 st.subheader("🏆 Leaderboard (Best Accuracy)")
 display_leaderboard("wine_scores", "accuracy", ascending=False)
+
+# Display user's attempt history
+display_user_attempts(username, "wine_attempts", "accuracy")

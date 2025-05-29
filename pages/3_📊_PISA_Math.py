@@ -1,14 +1,13 @@
 # pages/3_📊_PISA_Math.py
 import streamlit as st
 import pandas as pd
-import numpy as np
 from sklearn.metrics import mean_absolute_error
 import sys
 import os
 
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils import handle_username_input, save_score, display_leaderboard
+from utils import handle_username_input, save_score, display_leaderboard, display_user_attempts
 
 st.set_page_config(page_title="PISA Math Performance", page_icon="📊")
 
@@ -57,12 +56,14 @@ if uploaded:
             mae = mean_absolute_error(y_true, preds)
             st.success(f"Your MAE: {mae:.2f}")
             
-            # Save if better
+            # Save score and attempt
             is_better = lambda new, old: new < old
-            saved = save_score(username, mae, "pisa_scores", "mae", is_better)
+            is_new_best = save_score(username, mae, "pisa_scores", "pisa_attempts", "mae", is_better)
             
-            if saved:
+            if is_new_best:
                 st.success("New personal best saved! 🎉")
+            else:
+                st.info("Score saved! Keep trying to beat your best.")
             
         except Exception as e:
             st.error(f"Error processing file: {e}")
@@ -72,3 +73,6 @@ if uploaded:
 # Display leaderboard
 st.subheader("🏆 Leaderboard (Best MAE)")
 display_leaderboard("pisa_scores", "mae", ascending=True)
+
+# Display user's attempt history
+display_user_attempts(username, "pisa_attempts", "mae")
