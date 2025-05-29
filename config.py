@@ -25,5 +25,14 @@ def init_database():
     )
     """)
     
+    # PISA math performance table
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS pisa_scores (
+        username TEXT PRIMARY KEY,
+        mae REAL,
+        uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+    
     conn.commit()
     return conn

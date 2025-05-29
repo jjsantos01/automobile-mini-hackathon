@@ -28,6 +28,11 @@ Welcome to the ML Hackathon Platform! Navigate through the challenges using the 
 - **Metric**: Accuracy
 - **Goal**: Classify wine quality scores
 
+### 📊 PISA Math Performance
+- **Type**: Regression
+- **Metric**: MAE (Mean Absolute Error)
+- **Goal**: Predict student performance in PISA mathematics tests
+
 ## How to Participate:
 1. Choose your username (it will be saved in the URL for convenience)
 2. Download the training data and develop your model
