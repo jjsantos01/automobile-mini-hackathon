@@ -2,6 +2,8 @@
 
 A multi-page Streamlit application for hosting machine learning challenges with automatic scoring and leaderboards. Perfect for educational environments, competitions, or skill assessment.
 
+![Home](/imgs/home.png)
+
 ## Features
 
 - **Multiple Challenge Types**: Supports regression and classification tasks
@@ -20,17 +22,23 @@ A multi-page Streamlit application for hosting machine learning challenges with 
 - **Goal**: Predict automobile prices
 - See instruction at [hackaton_regression_students.ipynb](/hackaton_regression_students.ipynb)
 
+    ![Car Price Example](/imgs/car_price.png)
+
 ### 🍷 Wine Quality Classification
 
 - **Type**: Multiclass Classification  
 - **Metric**: Accuracy
 - **Goal**: Classify wine quality scores (3-9 scale)
 
+    ![Wine Quality Example](/imgs/wine_quality.png)
+
 ### 📊 PISA Math Performance
 
 - **Type**: Regression
 - **Metric**: MAE (Mean Absolute Error)
 - **Goal**: Predict student performance in PISA mathematics tests
+
+    ![PISA Math Example](imgs/pisa.png)
 
 ## Project Structure
 
