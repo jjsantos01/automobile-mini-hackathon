@@ -68,7 +68,12 @@ if uploaded:
 
 # Display leaderboard
 st.subheader("🏆 Leaderboard (Best RMSE)")
-display_leaderboard("car_scores", "rmse", ascending=True)
+col1, col2 = st.columns([3, 1])
+with col2:
+    if st.button("🔄 Refresh", key="refresh_car"):
+        st.rerun()
+with col1:
+    display_leaderboard("car_scores", "rmse", ascending=True)
 
 # Display user's attempt history
 display_user_attempts(username, "car_attempts", "rmse")

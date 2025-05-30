@@ -72,7 +72,12 @@ if uploaded:
 
 # Display leaderboard
 st.subheader("🏆 Leaderboard (Best MAE)")
-display_leaderboard("pisa_scores", "mae", ascending=True)
+col1, col2 = st.columns([3, 1])
+with col2:
+    if st.button("🔄 Refresh", key="refresh_pisa"):
+        st.rerun()
+with col1:
+    display_leaderboard("pisa_scores", "mae", ascending=True)
 
 # Display user's attempt history
 display_user_attempts(username, "pisa_attempts", "mae")

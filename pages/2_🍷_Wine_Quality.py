@@ -80,7 +80,12 @@ if uploaded:
 
 # Display leaderboard
 st.subheader("🏆 Leaderboard (Best Accuracy)")
-display_leaderboard("wine_scores", "accuracy", ascending=False)
+col1, col2 = st.columns([3, 1])
+with col2:
+    if st.button("🔄 Refresh", key="refresh_wine"):
+        st.rerun()
+with col1:
+    display_leaderboard("wine_scores", "accuracy", ascending=False)
 
 # Display user's attempt history
 display_user_attempts(username, "wine_attempts", "accuracy")
